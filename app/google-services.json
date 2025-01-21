@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "64580166605",
+    "project_id": "achievementtracker-v3creo",
+    "storage_bucket": "achievementtracker-v3creo.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:64580166605:android:dd8fe78e740040a92ada84",
+        "android_client_info": {
+          "package_name": "com.example.achievementtracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbhLS_45kulGoJGyOBcqpQMdLpzFyU1n8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
