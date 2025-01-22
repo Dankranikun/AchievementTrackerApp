@@ -39,7 +39,7 @@ fun AchievementScreen(appId: String, navController: NavHostController) {
             try {
                 // Llamar a la API para conseguir los logros de un juego
                 val response = ApiClient.steamApi.getGameAchievements(
-                    apiKey = "<YOUR_API_KEY",
+                    apiKey = "<YOUR_API_KEY>",
                     appId = appId // La ID que se ha introducido con el juego
                 )
                 // Guardar los logros en una lista

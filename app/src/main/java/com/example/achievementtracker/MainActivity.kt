@@ -5,6 +5,7 @@
 
 package com.example.achievementtracker
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -41,42 +42,47 @@ class MainActivity : ComponentActivity() {
         val gameFileManager = GameFileManager(this)
 
         setContent {
-            // Cosa para navegar entre pantallas
+            // Crear el controlador de navegación
             val navController = rememberNavController()
-            // games es de donde sacamos la lista del arachivo o algo así
-            var games by remember { mutableStateOf(gameFileManager.loadGamesFromFile()) }
-            // Por si errores
-            var errorMessage by remember { mutableStateOf<String?>(null) }
 
-            // Guardar el token de usuario
+            // Manejador de estado para la lista de juegos
+            var games by remember { mutableStateOf(gameFileManager.loadGamesFromFile()) }
+
+            // Verificar si hay un token de usuario guardado
             val sharedPreferences = getSharedPreferences("AuthPrefs", MODE_PRIVATE)
             val savedToken = sharedPreferences.getString("firebase_token", null)
 
-            if (savedToken != null) {
-                // Si hay token, redirige a la pantalla principal
-                navController.navigate("main_screen") {
-                    popUpTo(0) // Limpia el historial de navegación
-                }
-            } else {
-                // Si no hay token, redirige a la pantalla de bienvenida
-                navController.navigate("welcome_screen") {
-                    popUpTo(0) // Limpia el historial de navegación
+            // Usar LaunchedEffect para evitar navegar múltiples veces
+            LaunchedEffect(Unit) {
+                if (savedToken != null) {
+                    Log.d("MainActivity", "Token encontrado: $savedToken")
+                    navController.navigate("drawer_screen") {
+                        popUpTo(0) // Limpia el historial de navegación
+                    }
+                } else {
+                    Log.d("MainActivity", "No se encontró token. Redirigiendo a welcome_screen")
+                    navController.navigate("welcome_screen") {
+                        popUpTo(0) // Limpia el historial de navegación
+                    }
                 }
             }
-            // Cosa para navegar
+
+            // Configurar Navigator con las rutas y funciones
             Navigator(
                 navController = navController,
                 games = games,
                 onGameListChange = { updatedGames ->
-                    games = updatedGames // Actualizar la lista (volver a meterla cuando se navega)
+                    games = updatedGames // Actualizar el estado de los juegos
                     try {
-                        gameFileManager.saveGamesToFile(updatedGames) // Guardar la lista en un archivo
+                        gameFileManager.saveGamesToFile(updatedGames) // Guardar los cambios en el archivo
                     } catch (e: Exception) {
-                        errorMessage = "Error al guardar los datos: ${e.message}" // Por si falla
+                        Log.e("MainActivity", "Error al guardar los datos: ${e.message}")
                     }
                 }
             )
         }
+
+
     }
 }
 
@@ -86,7 +92,8 @@ fun DrawerScreen(
     games: List<GameInfo>, // Donde están los juegos
     onGameListChange: (List<GameInfo>) -> Unit // Para actualizar la lista
 ) {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed) //Si el desplegable está abierto
+    val drawerState =
+        rememberDrawerState(initialValue = DrawerValue.Closed) //Si el desplegable está abierto
     val coroutineScope = rememberCoroutineScope() // Para abrir o cerrar el desplegable
     var showAddGameDialog by remember { mutableStateOf(false) } // Cuadro de diálogo para añadir juegos
     var gameName by remember { mutableStateOf("") } // Nombre juego
@@ -157,12 +164,25 @@ fun DrawerScreen(
             ) {
                 // Botón para navegar a la pantalla de bienvenida
                 Button(
-                    onClick = { navController.navigate("welcome_screen") },
+                    onClick = {
+                        // Eliminar el token de SharedPreferences
+                        val sharedPreferences = navController.context.getSharedPreferences(
+                            "AuthPrefs",
+                            Context.MODE_PRIVATE
+                        )
+                        sharedPreferences.edit().remove("firebase_token").apply()
+
+                        // Navegar a la pantalla de bienvenida
+                        navController.navigate("welcome_screen") {
+                            popUpTo(0) // Limpia el historial de navegación
+                        }
+                    },
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
                 ) {
                     Text("Log out", color = Color.White)
                 }
+
 
                 Spacer(modifier = Modifier.height(16.dp))
 
