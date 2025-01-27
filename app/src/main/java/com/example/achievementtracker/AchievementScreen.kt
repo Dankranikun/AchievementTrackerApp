@@ -39,13 +39,13 @@ fun AchievementScreen(appId: String, navController: NavHostController) {
             try {
                 // Llamar a la API para conseguir los logros de un juego
                 val response = ApiClient.steamApi.getGameAchievements(
-                    apiKey = "<YOUR_KEY<>",
+                    apiKey = "1207434B25272E43254C24E350FDBB18",
                     appId = appId // La ID que se ha introducido con el juego
                 )
                 // Guardar los logros en una lista
                 achievements = response.game.availableGameStats?.achievements
             } catch (e: Exception) {
-                errorMessage = "Error al obtener logros: ${e.message}"
+                errorMessage = "Error obtaining the achievements: ${e.message}"
             }
         }
     }
@@ -60,7 +60,7 @@ fun AchievementScreen(appId: String, navController: NavHostController) {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Button(onClick = { navController.navigate("drawer_screen") }) {
-                    Text("Volver al inicio", color = Color.White)
+                    Text("Main menu", color = Color.White)
                 }
                 Button(onClick = {}) {
                     Text("Steam", color = Color.White)
@@ -70,6 +70,12 @@ fun AchievementScreen(appId: String, navController: NavHostController) {
                 }
                 Button(onClick = {}) {
                     Text("PSN", color = Color.White)
+                }
+                Button(onClick = {}) {
+                    Text("GOG", color = Color.White)
+                }
+                Button(onClick = {}) {
+                    Text("Epic Games", color = Color.White)
                 }
             }
         }
@@ -101,7 +107,7 @@ fun AchievementScreen(appId: String, navController: NavHostController) {
                     TextField(
                         value = "",
                         onValueChange = {},
-                        placeholder = { Text("Buscar logros...") },
+                        placeholder = { Text("Search achievement...") },
                         trailingIcon = {
                             Icon(
                                 imageVector = Icons.Default.Search,
@@ -137,7 +143,7 @@ fun AchievementScreen(appId: String, navController: NavHostController) {
                         items(achievements!!) { achievement ->
                             AchievementItem(
                                 title = achievement.displayName,
-                                description = achievement.description ?: "Sin descripción",
+                                description = achievement.description ?: "No description",
                                 iconUrl = achievement.icon,
                                 onClick = {
                                     // Navegar al detalle del logro

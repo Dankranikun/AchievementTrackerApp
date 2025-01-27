@@ -55,12 +55,12 @@ class MainActivity : ComponentActivity() {
             // Usar LaunchedEffect para evitar navegar múltiples veces
             LaunchedEffect(Unit) {
                 if (savedToken != null) {
-                    Log.d("MainActivity", "Token encontrado: $savedToken")
+                    Log.d("MainActivity", "Token found: $savedToken")
                     navController.navigate("drawer_screen") {
                         popUpTo(0) // Limpia el historial de navegación
                     }
                 } else {
-                    Log.d("MainActivity", "No se encontró token. Redirigiendo a welcome_screen")
+                    Log.d("MainActivity", "Token not found. Redirecting to welcome_screen")
                     navController.navigate("welcome_screen") {
                         popUpTo(0) // Limpia el historial de navegación
                     }
@@ -76,7 +76,7 @@ class MainActivity : ComponentActivity() {
                     try {
                         gameFileManager.saveGamesToFile(updatedGames) // Guardar los cambios en el archivo
                     } catch (e: Exception) {
-                        Log.e("MainActivity", "Error al guardar los datos: ${e.message}")
+                        Log.e("MainActivity", "Error saving: ${e.message}")
                     }
                 }
             )
@@ -129,15 +129,15 @@ fun DrawerScreen(
     if (showDeleteDialog && gameToDelete != null) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Eliminar Juego") },
-            text = { Text("¿Estás seguro de que quieres eliminar \"${gameToDelete?.name}\"?") },
+            title = { Text("Remove game") },
+            text = { Text("Are you sure you want to remove \"${gameToDelete?.name}\"?") },
             confirmButton = {
                 TextButton(onClick = {
                     onGameListChange(games - gameToDelete!!)
                     showDeleteDialog = false
                     gameToDelete = null
                 }) {
-                    Text("Eliminar")
+                    Text("Remove")
                 }
             },
             dismissButton = {
@@ -145,7 +145,7 @@ fun DrawerScreen(
                     showDeleteDialog = false
                     gameToDelete = null
                 }) {
-                    Text("Cancelar")
+                    Text("Cancel")
                 }
             }
         )
@@ -303,10 +303,13 @@ fun AddGameDialog(
     onDismiss: () -> Unit,
     onAccept: () -> Unit
 ) {
+    // Cuadro de diálogo (lo de añadir juegos)
     AlertDialog(
+        // Si se cierra sin aceptar se cancela la actividad
         onDismissRequest = onDismiss,
         title = { Text("Add Game") },
         text = {
+            // Columna para mostrar los 2 textfield (los botones no)
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 TextField(
                     value = gameName,
@@ -322,6 +325,7 @@ fun AddGameDialog(
                 )
             }
         },
+        // Los botones
         confirmButton = {
             TextButton(onClick = onAccept) {
                 Text("Accept")
@@ -335,4 +339,8 @@ fun AddGameDialog(
     )
 }
 
-data class GameInfo(val appId: String, val name: String, val imageUrl: String)
+data class GameInfo(
+    val appId: String, // ID del juego
+    val name: String, // Nombre del juego
+    val imageUrl: String // URL de la imagen del juego (en desuso)
+)
