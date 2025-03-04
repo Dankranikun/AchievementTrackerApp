@@ -76,7 +76,7 @@ Si deseas contribuir:
 5. Abre un Pull Request.
 
 ## Contacto
-Si tienes preguntas o sugerencias, puedes contactarme en [tu_email@example.com] o abrir un issue en el repositorio.
+Si tienes preguntas o sugerencias, puedes contactarme en [nicopla808@gmail.com] o abrir un issue en el repositorio.
 
 ## Licencia
 Este proyecto está licenciado bajo la [MIT License](LICENSE).
