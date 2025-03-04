@@ -1,48 +1,71 @@
 # AchievementManager
 
 ## Descripción
-**AchievementManager** es un sistema para la gestión de logros en aplicaciones o juegos. Permite registrar, desbloquear y visualizar logros de los usuarios, facilitando la motivación y el seguimiento del progreso.
+**AchievementManager** es una aplicación que permite gestionar logros de videojuegos de diferentes plataformas como Steam, Xbox, PlayStation Network (PSN), GOG y Epic Games. Utiliza la API de Steam para obtener los logros de los juegos, permitiendo a los usuarios visualizarlos y organizarlos de manera eficiente.
 
 ## Características
-- Registro de logros con descripciones personalizadas.
-- Control del estado de los logros (bloqueado, desbloqueado, en progreso).
-- Persistencia de datos para guardar el estado de los logros.
-- Integración sencilla en cualquier juego o aplicación.
-- Interfaz amigable para mostrar logros al usuario.
-
-## Instalación
-1. Clona el repositorio:
-   ```sh
-   git clone https://github.com/tu_usuario/AchievementManager.git
-   ```
-2. Accede al directorio del proyecto:
-   ```sh
-   cd AchievementManager
-   ```
-3. Instala las dependencias necesarias (según el lenguaje o framework utilizado).
-
-## Uso
-### Registro de logros
-Puedes agregar logros utilizando el siguiente formato:
-```java
-Achievement logro = new Achievement("Maestro del Juego", "Completa todos los niveles", false);
-achievementManager.addAchievement(logro);
-```
-
-### Desbloqueo de logros
-```java
-achievementManager.unlockAchievement("Maestro del Juego");
-```
-
-### Obtener lista de logros desbloqueados
-```java
-List<Achievement> logrosDesbloqueados = achievementManager.getUnlockedAchievements();
-```
+- Consulta y visualización de logros de juegos de Steam.
+- Integración con múltiples plataformas de juegos.
+- Interfaz intuitiva basada en Jetpack Compose con Material3.
+- Navegación fluida con Jetpack Navigation.
+- Soporte para almacenamiento de datos persistente.
 
 ## Tecnologías utilizadas
-- Lenguaje: Java/Kotlin (dependiendo del stack del proyecto)
-- Almacenamiento: JSON/SQLite (según la implementación)
-- Frameworks opcionales: Android, Godot, Unity
+- **Lenguaje:** Kotlin
+- **Interfaz:** Jetpack Compose con Material3
+- **Red:** Retrofit para consumir la API de Steam
+- **Navegación:** Jetpack Navigation
+- **Persistencia:** SharedPreferences y almacenamiento local de juegos
+
+## Instalación y Configuración
+1. **Clonar el repositorio:**
+   ```sh
+   git clone https://github.com/Dankranikun/AchievementManager.git
+   ```
+2. **Abrir el proyecto en Android Studio.**
+3. **Configurar la API Key de Steam:**
+   - En el archivo `AchievementScreen.kt`, reemplaza el valor de `apiKey` con tu clave de Steam.
+4. **Ejecutar la aplicación en un emulador o dispositivo físico.**
+
+## Uso
+### Navegación y Pantallas
+- **Pantalla Principal:** Lista de juegos guardados.
+- **Pantalla de Logros:** Muestra los logros obtenidos de un juego específico de Steam.
+- **Menú lateral:** Permite seleccionar diferentes plataformas de juegos.
+- **Búsqueda de logros:** Campo de texto con filtrado de logros.
+
+### Código de ejemplo
+#### Obtener logros de Steam mediante la API
+```kotlin
+LaunchedEffect(appId) {
+    coroutineScope.launch {
+        try {
+            val response = ApiClient.steamApi.getGameAchievements(
+                apiKey = "TU_API_KEY",
+                appId = appId
+            )
+            achievements = response.game.availableGameStats?.achievements
+        } catch (e: Exception) {
+            errorMessage = "Error obteniendo los logros: ${e.message}"
+        }
+    }
+}
+```
+
+#### Mostrar logros en una lista
+```kotlin
+LazyColumn(modifier = Modifier.fillMaxSize()) {
+    items(achievements!!) { achievement ->
+        AchievementItem(
+            title = achievement.displayName,
+            description = achievement.description ?: "No description",
+            iconUrl = achievement.icon,
+            onClick = { navController.navigate("achievement_detail/${achievement.displayName}") },
+            isClickable = false
+        )
+    }
+}
+```
 
 ## Contribución
 Si deseas contribuir:
